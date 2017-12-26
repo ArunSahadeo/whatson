@@ -35,6 +35,8 @@ function getFollowedStreams(limit)
             }
         });
 
+        if (channelNames.length < 1) return;
+
         channelNames.sort();
 
         channelNames.forEach(function(channelName){
