@@ -98,28 +98,32 @@ function sendFollow(channel)
 
     function postFollowRequest(channelID)
     {
-        return https.request({
+        var followOptions = {
             hostname: connectionParams.host,
-            path: connectionParams.path.channelFollow + "/" + channelID,
+            path: connectionParams.path.channelFollow + channelID,
             port: 443,
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Accept': 'application/vnd.twitchtv.v5+json',
                 'Client-ID': config.client_id,
                 'Authorization': 'OAuth ' + config.oauth
             }
-        }, function (response) {
-            var body = '';
-            response.on('data', function(d) {
-                body += d;
-            });
-        
-        response.on('end', function()
-        {
-            var parsed = JSON.parse(body);
-            console.log(parsed);
+        };
+
+        var followRequest = https.request(followOptions, function(req){
+            //console.log(req);
         });
+
+        followRequest.on("response", function(res){
+            //console.log("Status code: " + res.statusCode);
+            console.log(res);
         });
+
+        followRequest.on("error", function(err){
+            console.log(err);
+        });
+
+        followRequest.end();
 
     }
 

@@ -1,6 +1,6 @@
 {
-    "user":             "",
-    "oauth":            "",
-    "client_id":        "",
-    "client_secret":    ""
+    "user":             "PUT YOUR USER UID HERE",
+    "oauth":            "PUT YOUR ACCESS TOKEN HERE",
+    "client_id":        "PUT YOUR CLIENT ID HERE",
+    "client_secret":    "PUT YOUR CLIENT SECRET HERE"
 }
