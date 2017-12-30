@@ -6,7 +6,8 @@ var connectionParams = {
         followedChannels: '/kraken/streams/followed?stream_type=live',
         getUser: '/kraken/users',
         channelFollow: `/kraken/users/${config.user}/follows/channels/`,
-        channelStatus: '/kraken/streams/'
+        channelStatus: '/kraken/streams/',
+        communityStatus: '/kraken/communities'
     }
 }
 
@@ -46,6 +47,48 @@ function getChannelID(channelDisplayName)
     }
 
     findChannelID();
+
+    })
+
+
+}
+
+function getCommunityID(communityDisplayName)
+{
+    if (communityDisplayName.length < 1) return;
+
+    return new Promise((resolve, reject) => {
+
+    var options = {
+        hostname: connectionParams.host,
+        path: connectionParams.path.communityStatus + "?name=" + communityDisplayName,
+        port: 443,
+        headers: {
+            'Accept': 'application/vnd.twitchtv.v5+json',
+            'Client-ID': config.client_id,
+            'Authorization': 'OAuth ' + config.oauth
+        }
+    };
+
+    var findCommunityID = function()
+    {
+        https.get(options, function (response) {
+            var body = '';
+            response.on('data', function(d) {
+                body += d;
+            });
+        
+        response.on('end', function()
+        {
+            var parsed = JSON.parse(body);
+            var communityID = parsed._id;
+            resolve(communityID);
+        });
+        }).end();
+
+    }
+
+    findCommunityID();
 
     })
 
@@ -172,6 +215,71 @@ function sendUnfollow(channel)
 
 }
 
+function checkCommunity(community, streamLimit)
+{
+
+    function getCommunityStreams(communityID)
+    {
+        var communityStreamOptions = {
+            hostname: connectionParams.host,
+            path: streamLimit > 0 ? connectionParams.path.channelStatus.slice(0, -1) + "?community_id=" + communityID + "&limit=" + streamLimit : connectionParams.path.channelStatus.slice(0, -1) + "?community_id=" + communityID,
+            port: 443,
+            method: 'GET',
+            headers: {
+                'Accept': 'application/vnd.twitchtv.v5+json',
+                'Client-ID': config.client_id,
+                'Authorization': 'OAuth ' + config.oauth
+            }
+        };
+        
+        var communityRequest = https.get(communityStreamOptions);
+
+        communityRequest.on("response", function(res){
+            var communityBody = '';
+            console.log("Status message: " + res.statusMessage);
+            console.log("Status code: " + res.statusCode);
+
+        res.on("data", function(data){
+            communityBody += data;
+            console.log(communityBody);
+        })
+
+        res.on("end", function()
+        {
+            var parsed = JSON.parse(communityBody),
+                streams = parsed.streams,
+                communityStreams = [];
+
+            Array.from(streams).forEach(function(stream){
+                if (stream.channel.display_name.length > 0) {
+                    communityStreams.push(String(stream.channel.display_name).toLowerCase());
+                }
+            });
+
+            if (communityStreams.length < 1) return;
+
+            communityStreams.sort();
+
+            console.log("Number of channels: " + communityStreams.length);
+
+            communityStreams.forEach(function(communityStream){
+                console.log(communityStream);
+            });
+
+        });
+
+        }).on("error", function(err){
+            console.log(err);
+        });
+
+    }
+
+    getCommunityID(community).then(getCommunityStreams, function(error){
+        console.error("Failed!", error);
+    });
+
+}
+
 function checkLive(channel)
 {
 
@@ -229,12 +337,17 @@ switch (args[0].toLowerCase()) {
         const limit = args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : 0;
         getFollowedStreams(limit);
     break;
+    case (args[0].match(/--community/) || {}).input:
+        const community = args[0].includes("=") ? args[0].split("=")[1] : '';
+        const streamLimit = args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : 0;
+        checkCommunity(community, streamLimit);
+    break;
     case (args[0].match(/--follow/) || {}).input:
-        const channel = args[0].includes("--follow") ? args[0].split("=")[1] : 0;
+        const channel = args[0].includes("--follow") ? args[0].split("=")[1] : '';
         sendFollow(channel);
     break;
     case (args[0].match(/--unfollow/) || {}).input:
-        const channelToUnfollow = args[0].includes("--unfollow") ? args[0].split("=")[1] : 0;
+        const channelToUnfollow = args[0].includes("--unfollow") ? args[0].split("=")[1] : '';
         sendUnfollow(channelToUnfollow);
     break;
     case (args[0].match(/--is-live/) || {}).input:
