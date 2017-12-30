@@ -2,6 +2,16 @@
 
 Node command-line executable that hooks into the Twitch API and returns a list of live channels from the ones from you are following.
 
+## Prerequisites
+
+Run the following:
+
+```bash
+npm install
+```
+
+Also copy `config.json.example` as `config.json` and enter the appropriate values for your Twitch account.
+
 ## Usage
 
 ### How to check if a specific channel is live or not
