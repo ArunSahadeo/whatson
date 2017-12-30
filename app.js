@@ -251,18 +251,29 @@ function checkCommunity(community, streamLimit)
 
             Array.from(streams).forEach(function(stream){
                 if (stream.channel.display_name.length > 0) {
-                    communityStreams.push(String(stream.channel.display_name).toLowerCase());
+                    communityStreams.push(stream.channel);
                 }
             });
 
             if (communityStreams.length < 1) return;
 
-            communityStreams.sort();
+            function alphaSort(a, b)
+            {
+                if (a.name < b.name) return -1;
+                if (a.name > b.name) return 1;
+                return 0;
+            }
 
-            console.log("Number of channels: " + communityStreams.length);
+            communityStreams.sort(alphaSort);
+
+            console.log("Number of channels: " + communityStreams.length + "\n\n");
 
             communityStreams.forEach(function(communityStream){
-                console.log(communityStream);
+                console.log("Streamer: " + communityStream.name);
+                console.log("Status: " + communityStream.status);
+                console.log("Desc: " + communityStream.description);
+                console.log("Lang: " + communityStream.language);
+                console.log("\n");
             });
 
         });
