@@ -132,6 +132,44 @@ function sendFollow(channel)
 
 }
 
+function sendUnfollow(channel)
+{
+
+    function postUnfollowRequest(channelID)
+    {
+        var unfollowOptions = {
+            hostname: connectionParams.host,
+            path: connectionParams.path.channelFollow + channelID,
+            port: 443,
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/vnd.twitchtv.v5+json',
+                'Client-ID': config.client_id,
+                'Authorization': 'OAuth ' + config.oauth
+            }
+        };
+
+        var unfollowRequest = https.request(unfollowOptions);
+
+        unfollowRequest.on("response", function(res){
+            console.log("Status message: " + res.statusMessage);
+            console.log("Status code: " + res.statusCode);
+        });
+
+        unfollowRequest.on("error", function(err){
+            console.log(err);
+        });
+
+        unfollowRequest.end();
+
+    }
+
+    getChannelID(channel).then(postUnfollowRequest, function(error){
+        console.error("Failed!", error);
+    });
+
+}
+
 function checkLive(channel)
 {
 
@@ -192,6 +230,10 @@ switch (args[0].toLowerCase()) {
     case (args[0].match(/--follow/) || {}).input:
         const channel = args[0].includes("--follow") ? args[0].split("=")[1] : 0;
         sendFollow(channel);
+    break;
+    case (args[0].match(/--unfollow/) || {}).input:
+        const channelToUnfollow = args[0].includes("--unfollow") ? args[0].split("=")[1] : 0;
+        sendUnfollow(channelToUnfollow);
     break;
     case (args[0].match(/--is-live/) || {}).input:
         const liveStream = args[0].split("=")[1];
