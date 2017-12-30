@@ -241,7 +241,6 @@ function checkCommunity(community, streamLimit)
 
         res.on("data", function(data){
             communityBody += data;
-            console.log(communityBody);
         })
 
         res.on("end", function()
