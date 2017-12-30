@@ -149,21 +149,24 @@ function checkLive(channel)
             }
         };
 
-        var statusRequest = https.request(options);
-
-        statusRequest.on("response", function(channel){
-            console.log(channel);
-            if (channel["stream"] === null) console.log(channel + " is not live");
+        return https.get(options, function (response) {
+            var body = '';
+            response.on('data', function(d) {
+                body += d;
+            });
+        
+        response.on('end', function()
+        {
+            var parsed = JSON.parse(body),
+                stream = parsed.stream;
+        
+            if (stream === null) console.log(channel + " is not live");
 
             else console.log(channel + " is live");
+
+
         });
-
-        statusRequest.on("error", function(err){
-            console.log(err);
         });
-
-        statusRequest.end();
-
     }
 
     getChannelID(channel).then(isLive, function(error){
