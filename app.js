@@ -86,6 +86,8 @@ function getFollowedStreams(limit)
 
         channelNames.sort();
 
+        console.log("Number of channels: " + channelNames.length);
+
         channelNames.forEach(function(channelName){
             console.log(channelName);
         });
@@ -224,7 +226,7 @@ if ( args.length < 1 )
 
 switch (args[0].toLowerCase()) {
     case (args[0].match(/--channels/) || {}).input:
-        const limit = args[1].includes("--limit") ? args[1].split("=")[1] : 0;
+        const limit = args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : 0;
         getFollowedStreams(limit);
     break;
     case (args[0].match(/--follow/) || {}).input:
