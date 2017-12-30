@@ -5,7 +5,8 @@ var connectionParams = {
     path: {
         followedChannels: '/kraken/streams/followed?stream_type=live',
         getUser: '/kraken/users',
-        channelFollow: `/kraken/users/${config.user}/follows/channels/`
+        channelFollow: `/kraken/users/${config.user}/follows/channels/`,
+        channelStatus: '/kraken/streams/'
     }
 }
 
@@ -110,13 +111,11 @@ function sendFollow(channel)
             }
         };
 
-        var followRequest = https.request(followOptions, function(req){
-            //console.log(req);
-        });
+        var followRequest = https.request(followOptions);
 
         followRequest.on("response", function(res){
-            //console.log("Status code: " + res.statusCode);
-            console.log(res);
+            console.log("Status message: " + res.statusMessage);
+            console.log("Status code: " + res.statusCode);
         });
 
         followRequest.on("error", function(err){
@@ -127,10 +126,48 @@ function sendFollow(channel)
 
     }
 
-    getChannelID(channel).then(function(channelID) {
-        postFollowRequest(channelID);
-    }, function(error) {
-        console.error("Failed!", error);  
+    getChannelID(channel).then(postFollowRequest, function(error){
+        console.error("Failed!", error);
+    });
+
+}
+
+function checkLive(channel)
+{
+
+    function isLive(channelID)
+    {
+        var options = {
+            hostname: connectionParams.host,
+            path: connectionParams.path.channelStatus + channelID,
+            port: 443,
+            method: 'GET',
+            headers: {
+                'Accept': 'application/vnd.twitchtv.v5+json',
+                'Client-ID': config.client_id,
+                'Authorization': 'OAuth ' + config.oauth
+            }
+        };
+
+        var statusRequest = https.request(options);
+
+        statusRequest.on("response", function(channel){
+            console.log(channel);
+            if (channel["stream"] === null) console.log(channel + " is not live");
+
+            else console.log(channel + " is live");
+        });
+
+        statusRequest.on("error", function(err){
+            console.log(err);
+        });
+
+        statusRequest.end();
+
+    }
+
+    getChannelID(channel).then(isLive, function(error){
+        console.error("Failed!", error);
     });
 
 }
