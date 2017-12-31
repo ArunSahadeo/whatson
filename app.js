@@ -290,6 +290,74 @@ function checkCommunity(community, streamLimit)
 
 }
 
+function checkGame(game, streamLimit)
+{
+
+
+        var gameStreamOptions = {
+            hostname: connectionParams.host,
+            path: streamLimit > 0 ? connectionParams.path.channelStatus.slice(0, -1) + "?game=" + game + "&limit=" + streamLimit : connectionParams.path.channelStatus.slice(0, -1) + "?game=" + game,
+            port: 443,
+            method: 'GET',
+            headers: {
+                'Accept': 'application/vnd.twitchtv.v5+json',
+                'Client-ID': config.client_id,
+                'Authorization': 'OAuth ' + config.oauth
+            }
+        };
+        
+        var gameRequest = https.get(gameStreamOptions);
+
+        gameRequest.on("response", function(res){
+            var gameBody = '';
+            console.log("Status message: " + res.statusMessage);
+            console.log("Status code: " + res.statusCode);
+
+        res.on("data", function(data){
+            gameBody += data;
+        })
+
+        res.on("end", function()
+        {
+            var parsed = JSON.parse(gameBody),
+                streams = parsed.streams,
+                gameStreams = [];
+
+            Array.from(streams).forEach(function(stream){
+                if (stream.channel.display_name.length > 0) {
+                    gameStreams.push(stream.channel);
+                }
+            });
+
+            if (gameStreams.length < 1) return;
+
+            function alphaSort(a, b)
+            {
+                if (a.name < b.name) return -1;
+                if (a.name > b.name) return 1;
+                return 0;
+            }
+
+            gameStreams.sort(alphaSort);
+
+            console.log("Number of channels: " + gameStreams.length + "\n\n");
+
+            gameStreams.forEach(function(gameStream){
+                console.log("Streamer: " + gameStream.name);
+                console.log("Status: " + gameStream.status);
+                console.log("Desc: " + gameStream.description);
+                console.log("Lang: " + gameStream.language);
+                console.log("\n");
+            });
+
+        });
+
+        }).on("error", function(err){
+            console.log(err);
+        });
+
+}
+
 function checkLive(channel)
 {
 
@@ -351,6 +419,11 @@ switch (args[0].toLowerCase()) {
         const community = args[0].includes("=") ? args[0].split("=")[1] : '';
         const streamLimit = args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : 0;
         checkCommunity(community, streamLimit);
+    break;
+    case (args[0].match(/--game/) || {}).input:
+        const game = args[0].includes("=") ? args[0].split("=")[1] : '';
+        const gameLimit = args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : 0;
+        checkGame(game, gameLimit);
     break;
     case (args[0].match(/--follow/) || {}).input:
         const channel = args[0].includes("--follow") ? args[0].split("=")[1] : '';
