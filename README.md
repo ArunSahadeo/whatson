@@ -55,3 +55,14 @@ node app.js --follow=somechannel
 ```bash
 node app.js --unfollow=somechannel
 ```
+### How to get live streams from a community
+
+```bash
+node app.js --community=somecommunity
+```
+
+#### Getting 5 live streams from a community
+
+```bash
+node app.js --community=somecommunity --limit=5
+```
