@@ -421,7 +421,7 @@ switch (args[0].toLowerCase()) {
         checkCommunity(community, streamLimit);
     break;
     case (args[0].match(/--game/) || {}).input:
-        const game = args[0].includes("=") ? args[0].split("=")[1] : '';
+        const game = args[0].includes("=") ? encodeURIComponent(args[0].split("=")[1]) : '';
         const gameLimit = args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : 0;
         checkGame(game, gameLimit);
     break;
