@@ -142,6 +142,7 @@ function getFollowedStreams(limit)
             console.log("Streamer: " + followedChannel.name);
             console.log("Status: " + followedChannel.status);
             console.log("Desc: " + followedChannel.description);
+            console.log("Game: " + followedChannel.game);
             console.log("Lang: " + followedChannel.language);
             console.log("\n");
         });
