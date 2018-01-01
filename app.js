@@ -116,23 +116,34 @@ function getFollowedStreams(limit)
     {
         var parsed = JSON.parse(body),
             streams = parsed.streams,
-            channelNames = []
+            followedChannels = []
             ;
 
         Array.from(streams).forEach(function(stream){
             if (stream.channel.display_name.length > 0) {
-                channelNames.push(String(stream.channel.display_name).toLowerCase());
+                followedChannels.push(stream.channel);
             }
         });
 
-        if (channelNames.length < 1) return;
+        if (followedChannels.length < 1) return;
 
-        channelNames.sort();
+        function alphaSort(a, b)
+        {
+            if (a.name < b.name) return -1;
+            if (a.name > b.name) return 1;
+            return 0;
+        }
 
-        console.log("Number of channels: " + channelNames.length);
+        followedChannels.sort(alphaSort);
 
-        channelNames.forEach(function(channelName){
-            console.log(channelName);
+        console.log("Number of channels: " + followedChannels.length + "\n\n");
+
+        followedChannels.forEach(function(followedChannel){
+            console.log("Streamer: " + followedChannel.name);
+            console.log("Status: " + followedChannel.status);
+            console.log("Desc: " + followedChannel.description);
+            console.log("Lang: " + followedChannel.language);
+            console.log("\n");
         });
 
     });
