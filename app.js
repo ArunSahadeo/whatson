@@ -284,6 +284,7 @@ function checkCommunity(community, streamLimit)
                 console.log("Streamer: " + communityStream.name);
                 console.log("Status: " + communityStream.status);
                 console.log("Desc: " + communityStream.description);
+                console.log("Game: " + communityStream.game);
                 console.log("Lang: " + communityStream.language);
                 console.log("\n");
             });
