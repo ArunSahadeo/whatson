@@ -185,7 +185,10 @@ function sendFollow(channel)
 
     getChannelID(channel).then(postFollowRequest, function(error){
         console.error("Failed!", error);
+        return;
     });
+
+    console.log("You are now following " + channel);
 
 }
 
@@ -223,7 +226,10 @@ function sendUnfollow(channel)
 
     getChannelID(channel).then(postUnfollowRequest, function(error){
         console.error("Failed!", error);
+        return;
     });
+
+    console.log("You have unfollowed " + channel);
 
 }
 
