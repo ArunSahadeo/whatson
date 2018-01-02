@@ -140,7 +140,7 @@ function getFollowedStreams(limit, category)
         {
             followedChannels = followedChannels.filter(function(row)
             {
-                return String(row.game).toLowerCase() === category;
+                return String(row.game).toLowerCase() === category.toLowerCase();
             });
 
         }   
