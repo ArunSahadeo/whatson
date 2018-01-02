@@ -95,7 +95,7 @@ function getCommunityID(communityDisplayName)
 
 }
 
-function getFollowedStreams(limit)
+function getFollowedStreams(limit, category)
 {
     return https.get({
         hostname: connectionParams.host,
@@ -135,6 +135,15 @@ function getFollowedStreams(limit)
         }
 
         followedChannels.sort(alphaSort);
+
+        if (category.length > 1)
+        {
+            followedChannels = followedChannels.filter(function(row)
+            {
+                return String(row.game).toLowerCase() === category;
+            });
+
+        }   
 
         console.log("Number of channels: " + followedChannels.length + "\n\n");
 
@@ -432,7 +441,8 @@ if ( args.length < 1 )
 switch (args[0].toLowerCase()) {
     case (args[0].match(/--channels/) || {}).input:
         const limit = args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : 0;
-        getFollowedStreams(limit);
+        const category = (args[1] && args[1].includes("--category")) || (args[2] && args[2].includes("--category")) ? args[1].split("=")[1] || args[2].split("=")[2] : '';
+        getFollowedStreams(limit, category);
     break;
     case (args[0].match(/--community/) || {}).input:
         const community = args[0].includes("=") ? args[0].split("=")[1] : '';
