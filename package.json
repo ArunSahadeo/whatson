@@ -4,9 +4,7 @@
   "description": "NPM command-line executable that hooks into the Twitch API and returns a list of live channels from the ones from you are following.",
   "main": "main.js",
   "dependencies": {
-    "optimist": "^0.6.1",
-    "https": "^1.0.0",
-    "request": "^2.83.0"
+    "https": "^1.0.0"
   },
   "devDependencies": {},
   "scripts": {
