@@ -7,7 +7,8 @@ var connectionParams = {
         getUser: '/kraken/users',
         channelFollow: `/kraken/users/${config.user}/follows/channels/`,
         channelStatus: '/kraken/streams/',
-        communityStatus: '/kraken/communities'
+        communityStatus: '/kraken/communities',
+        channelPanels: '/api/channels/CHANNEL_PLACEHOLDER/panels'
     }
 }
 
@@ -429,6 +430,48 @@ function checkLive(channel)
 
 }
 
+function getPanels(channel)
+{
+
+    var panelPath = connectionParams.path.channelPanels.replace(/channel_placeholder/i, channel);
+
+    function queryPanels(channel)
+    {
+        var options = {
+            hostname: connectionParams.host,
+            path: panelPath,
+            port: 443,
+            method: 'GET',
+            headers: {
+                'Accept': 'application/vnd.twitchtv.v5+json',
+                'Client-ID': config.client_id,
+                'Authorization': 'OAuth ' + config.oauth
+            }
+        };
+
+        return https.get(options, function (response) {
+            var body = '';
+            response.on('data', function(d) {
+                body += d;
+            });
+        
+        response.on('end', function()
+        {
+            var parsed = JSON.parse(body),
+                panels = [];
+
+            parsed.map((panel) =>
+            {
+                console.log(panel.data.description);
+            });
+        
+        });
+        });
+    }
+
+    queryPanels();
+}
+
 var args = process.argv.slice(2),
     help = "Please specify a flag.";
 
@@ -465,5 +508,9 @@ switch (args[0].toLowerCase()) {
     case (args[0].match(/--is-live/) || {}).input:
         const liveStream = args[0].split("=")[1];
         checkLive(liveStream);
+    break;
+    case (args[0].match(/--panel-info/) || {}).input:
+        const panelChannel = args[0].split("=")[1];
+        getPanels(panelChannel);
     break;
 }
