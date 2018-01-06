@@ -8,7 +8,8 @@ var connectionParams = {
         channelFollow: `/kraken/users/${config.user}/follows/channels/`,
         channelStatus: '/kraken/streams/',
         communityStatus: '/kraken/communities',
-        channelPanels: '/api/channels/CHANNEL_PLACEHOLDER/panels'
+        channelPanels: '/api/channels/CHANNEL_PLACEHOLDER/panels',
+        channelVideos: '/kraken/channels/CHANNEL_PLACEHOLDER/videos'
     }
 }
 
@@ -430,6 +431,58 @@ function checkLive(channel)
 
 }
 
+function lastBroadcast(channel)
+{
+
+    function checkLastUpdated(channelID)
+    {
+
+        var videoPath = connectionParams.path.channelVideos.replace(/CHANNEL_PLACEHOLDER/i, channelID); 
+        
+        var options = {
+            hostname: connectionParams.host,
+            path: videoPath + '?broadcasts=true&broadcast_type=archive&limit=1',
+            port: 443,
+            method: 'GET',
+            headers: {
+                'Accept': 'application/vnd.twitchtv.v5+json',
+                'Client-ID': config.client_id,
+                'Authorization': 'OAuth ' + config.oauth
+            }
+        };
+
+        return https.get(options, function (response) {
+            var body = '';
+            response.on('data', function(d) {
+                body += d;
+            });
+        
+        response.on('end', function()
+        {
+            var parsed = JSON.parse(body),
+                latestBroadcast = parsed.videos[0].recorded_at,
+                timeOffset = new Date().getTimezoneOffset() * 1000,
+                latestBroadcastDate = new Date(latestBroadcast);
+                
+        
+            console.log( ((latestBroadcastDate.getDate()).toString().length === 1 ? '0' + latestBroadcastDate.getDate() : latestBroadcastDate.getDate())
+                         + "-"
+                         + ( latestBroadcastDate.getMonth() + 1 )
+                         + "-"
+                         + latestBroadcastDate.getFullYear()
+
+                       );
+
+        });
+        });
+    }
+
+    getChannelID(channel).then(checkLastUpdated, function(error){
+        console.error("Failed!", error);
+    });
+
+}
+
 function getPanels(channel, displayOrder)
 {
 
@@ -525,6 +578,10 @@ switch (args[0].toLowerCase()) {
     case (args[0].match(/--is-live/) || {}).input:
         const liveStream = args[0].split("=")[1];
         checkLive(liveStream);
+    break;
+    case (args[0].match(/--last-updated/) || {}).input:
+        const channelToQuery = args[0].split("=")[1];
+        lastBroadcast(channelToQuery);
     break;
     case (args[0].match(/--panel-info/) || {}).input:
         const panelChannel = args[0].split("=")[1];
