@@ -430,7 +430,7 @@ function checkLive(channel)
 
 }
 
-function getPanels(channel)
+function getPanels(channel, displayOrder)
 {
 
     var panelPath = connectionParams.path.channelPanels.replace(/channel_placeholder/i, channel);
@@ -464,6 +464,18 @@ function getPanels(channel)
                 console.log("This user has no panels.");
                 return;
             };
+
+            if (displayOrder && displayOrder > 0)
+            {
+                const panelSingular = Array.from(parsed)
+                     .find(panel => {
+                        return parseInt(panel.display_order, 10) === parseInt(displayOrder, 10);
+                     });
+
+                console.log(panelSingular.data.description);
+
+                return;
+            }
 
             parsed.map((panel) =>
             {
@@ -516,6 +528,7 @@ switch (args[0].toLowerCase()) {
     break;
     case (args[0].match(/--panel-info/) || {}).input:
         const panelChannel = args[0].split("=")[1];
-        getPanels(panelChannel);
+        const displayOrder = args[1] && args[1].includes("--display-order") ? args[1].split("=")[1] : 0;
+        getPanels(panelChannel, displayOrder);
     break;
 }
