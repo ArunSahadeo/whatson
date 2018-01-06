@@ -457,14 +457,19 @@ function getPanels(channel)
         
         response.on('end', function()
         {
-            var parsed = JSON.parse(body),
-                panels = [];
+            var parsed = JSON.parse(body);
+
+            if (Object.keys(parsed).length < 1)
+            {
+                console.log("This user has no panels.");
+                return;
+            };
 
             parsed.map((panel) =>
             {
                 console.log(panel !== undefined ? panel.data.description : '');
             });
-        
+
         });
         });
     }
