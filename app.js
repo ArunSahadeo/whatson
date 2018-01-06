@@ -462,7 +462,7 @@ function getPanels(channel)
 
             parsed.map((panel) =>
             {
-                console.log(panel.data.description);
+                console.log(panel !== undefined ? panel.data.description : '');
             });
         
         });
