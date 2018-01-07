@@ -460,10 +460,15 @@ function lastBroadcast(channel)
         response.on('end', function()
         {
             var parsed = JSON.parse(body),
-                latestBroadcast = parsed.videos[0].recorded_at,
+                latestBroadcast = parsed.videos[0] ? parsed.videos[0].recorded_at : null,
                 timeOffset = new Date().getTimezoneOffset() * 1000,
                 latestBroadcastDate = new Date(new Date(latestBroadcast).getTime() - timeOffset);
                 
+            if (!latestBroadcast)
+            {
+                console.log("Channel has no videos");
+                return;
+            }
         
             console.log( ((latestBroadcastDate.getDate()).toString().length === 1 ? '0' + latestBroadcastDate.getDate() : latestBroadcastDate.getDate())
                          + "-"
