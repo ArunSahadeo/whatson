@@ -2,6 +2,7 @@ const https = require("https"), config = require("./config.json");
 
 var connectionParams = {
     host: 'api.twitch.tv',
+    frontendHost: 'www.twitch.tv',
     path: {
         followedChannels: '/kraken/streams/followed?stream_type=live',
         getUser: '/kraken/users',
@@ -434,6 +435,19 @@ function checkLive(channel)
 function lastBroadcast(channel)
 {
 
+    function lastChannelStatusUpdate(channel)
+    {
+        var options = {
+            hostname: connectionParams.frontendHost,
+            path: '/' + channel,
+            port: 443,
+            method: 'GET',
+            headers: {
+                'Accept': ''
+            }
+        }
+    }
+
     function checkLastUpdated(channelID)
     {
 
@@ -460,7 +474,7 @@ function lastBroadcast(channel)
         response.on('end', function()
         {
             var parsed = JSON.parse(body),
-                latestBroadcast = parsed.videos[0] ? parsed.videos[0].recorded_at : null,
+                latestBroadcast = parsed.videos[0] ? parsed.videos[0].recorded_at : lastChannelStatusUpdate(channel),
                 timeOffset = new Date().getTimezoneOffset() * 1000,
                 latestBroadcastDate = new Date(new Date(latestBroadcast).getTime() - timeOffset);
                 
@@ -547,6 +561,64 @@ function getPanels(channel, displayOrder)
     queryPanels();
 }
 
+function isFollowing(channel)
+{
+
+    function confirmFollow(channelID)
+    {
+        var options = {
+            hostname: connectionParams.host,
+            path: connectionParams.path.channelFollow,
+            port: 443,
+            method: 'GET',
+            headers: {
+                'Accept': 'application/vnd.twitchtv.v5+json',
+                'Client-ID': config.client_id,
+                'Authorization': 'OAuth ' + config.oauth
+            }
+        };
+
+        return https.get(options, function (response) {
+            var body = '';
+            response.on('data', function(d) {
+                body += d;
+            });
+        
+        response.on('end', function()
+        {
+            var parsed = JSON.parse(body),
+                follows = parsed.follows;
+
+            if (Object.keys(parsed).length < 1)
+            {
+                console.log("This user is not following any channels.");
+                return;
+            };
+
+            const followedChannel = Array.from(follows)
+                .find(targetChannel =>
+                {
+                    return targetChannel.channel.display_name.toLowerCase() === channel.toLowerCase();
+                });
+
+            if (!followedChannel)
+            {
+                console.log("You are not following this channel.")
+                return;
+            }
+
+            console.log("You are following " + followedChannel.channel.display_name);
+
+        });
+        });
+    }
+
+    getChannelID(channel).then(confirmFollow, function(error){
+        console.error("Failed!", error);
+    });
+
+}
+
 var args = process.argv.slice(2),
     help = "Please specify a flag.";
 
@@ -592,5 +664,9 @@ switch (args[0].toLowerCase()) {
         const panelChannel = args[0].split("=")[1];
         const displayOrder = args[1] && args[1].includes("--display-order") ? args[1].split("=")[1] : 0;
         getPanels(panelChannel, displayOrder);
+    break;
+    case (args[0].match(/--is-following/) || {}).input:
+        const channelToCheck = args[0].split("=")[1];
+        isFollowing(channelToCheck);
     break;
 }
