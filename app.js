@@ -102,7 +102,7 @@ function getFollowedStreams(limit, category)
 {
     return https.get({
         hostname: connectionParams.host,
-        path: limit > 0 ? connectionParams.path.followedChannels + ("&limit=" + limit) : connectionParams.path.followedChannels,
+        path: limit > 0 ? connectionParams.path.followedChannels + ("&limit=" + limit) : connectionParams.path.followedChannels + ("&limit=100"),
         port: 443,
         headers: {
             'Accept': 'application/vnd.twitchtv.v5+json',
