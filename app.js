@@ -252,7 +252,7 @@ function checkCommunity(community, streamLimit)
     {
         var communityStreamOptions = {
             hostname: connectionParams.host,
-            path: streamLimit > 0 ? connectionParams.path.channelStatus.slice(0, -1) + "?community_id=" + communityID + "&limit=" + streamLimit : connectionParams.path.channelStatus.slice(0, -1) + "?community_id=" + communityID,
+            path: streamLimit > 0 ? connectionParams.path.channelStatus.slice(0, -1) + "?community_id=" + communityID + "&limit=" + streamLimit : connectionParams.path.channelStatus.slice(0, -1) + "?community_id=" + communityID + "&limit=100",
             port: 443,
             method: 'GET',
             headers: {
