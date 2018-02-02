@@ -1,4 +1,10 @@
-const https = require("https"), config = require("./config.json");
+const https = require("https"), fs = require("fs"), config = fs.existsSync("./config.json") ? require("./config.json") : false;
+
+if (!config)
+{
+    console.log("config.json does not exist");
+    process.exit(0);
+}
 
 var connectionParams = {
     host: 'api.twitch.tv',
