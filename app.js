@@ -128,7 +128,8 @@ function getFollowedStreams(limit, category)
             followedChannels = []
             ;
 
-        Array.from(streams).forEach(function(stream){
+        Array.from(streams).forEach(function(stream, index){
+            stream.channel.viewers = streams[index].viewers;
             if (stream.channel.display_name.length > 0) {
                 followedChannels.push(stream.channel);
             }
@@ -156,12 +157,13 @@ function getFollowedStreams(limit, category)
 
         console.log("Number of channels: " + followedChannels.length + "\n\n");
 
-        followedChannels.forEach(function(followedChannel){
+        followedChannels.forEach(function(followedChannel, index){
             console.log("Streamer: " + followedChannel.name);
             console.log("Status: " + followedChannel.status);
             console.log("Desc: " + followedChannel.description);
             console.log("Game: " + followedChannel.game);
             console.log("Lang: " + followedChannel.language);
+            console.log("Viewers: " + followedChannel.viewers);
             console.log("\n");
         });
 
