@@ -128,6 +128,12 @@ function getFollowedStreams(limit, category)
             followedChannels = []
             ;
 
+        if (typeof(streams) === undefined)
+        {
+            console.log("Couldn't fetch followed channels. Please try again.");
+            return;
+        }
+
         Array.from(streams).forEach(function(stream, index){
             stream.channel.viewers = streams[index].viewers;
             if (stream.channel.display_name.length > 0) {
