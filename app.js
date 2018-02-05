@@ -157,7 +157,7 @@ function getFollowedStreams(limit, category)
 
         console.log("Number of channels: " + followedChannels.length + "\n\n");
 
-        followedChannels.forEach(function(followedChannel, index){
+        followedChannels.forEach(function(followedChannel){
             console.log("Streamer: " + followedChannel.name);
             console.log("Status: " + followedChannel.status);
             console.log("Desc: " + followedChannel.description);
@@ -287,7 +287,8 @@ function checkCommunity(community, streamLimit)
                 streams = parsed.streams,
                 communityStreams = [];
 
-            Array.from(streams).forEach(function(stream){
+            Array.from(streams).forEach(function(stream, index){
+                stream.channel.viewers = streams[index].viewers;
                 if (stream.channel.display_name.length > 0) {
                     communityStreams.push(stream.channel);
                 }
@@ -312,6 +313,7 @@ function checkCommunity(community, streamLimit)
                 console.log("Desc: " + communityStream.description);
                 console.log("Game: " + communityStream.game);
                 console.log("Lang: " + communityStream.language);
+                console.log("Viewers: " + communityStream.viewers);
                 console.log("\n");
             });
 
