@@ -17,11 +17,11 @@ for (var key in config)
         case "user":
             if (config.hasOwnProperty(key))
             {
-                key = key.charAt(0).toUpperCase() + key.substr(1);
+                keyName = key.charAt(0).toUpperCase() + key.substr(1);
                 keyValue = config[key];
                 if(!Number.isInteger(parseInt(keyValue)))
                 {
-                    console.log(key + " is not set");
+                    console.log(keyName + " is not set");
                     process.exit(0);
                 }
             }
@@ -29,11 +29,11 @@ for (var key in config)
         case "oauth":
             if (config.hasOwnProperty(key))
             {
-                key = key.charAt(0).toUpperCase() + key.substr(1);
+                keyName = key.charAt(0).toUpperCase() + key.charAt(1).toUpperCase() + key.substr(2);
                 keyValue = config[key];
                 if (!keyValue.match(alphaNumPattern))
                 {
-                    console.log(key + " is not set");
+                    console.log(keyName + " is not set");
                     process.exit(0);
                 }
             }
@@ -41,11 +41,11 @@ for (var key in config)
         case "client_id":
             if (config.hasOwnProperty(key))
             {
-                key = key.charAt(0).toUpperCase() + key.substr(1);
+                keyName = key.charAt(0).toUpperCase() + key.substr(1);
                 keyValue = config[key];
                 if (!keyValue.match(alphaNumPattern))
                 {
-                    console.log(key + " is not set");
+                    console.log(keyName + " is not set");
                     process.exit(0);
                 }
             }
@@ -53,11 +53,11 @@ for (var key in config)
         case "client_secret":
             if (config.hasOwnProperty(key))
             {
-                key = key.charAt(0).toUpperCase() + key.substr(1);
+                keyName = key.charAt(0).toUpperCase() + key.substr(1);
                 keyValue = config[key];
                 if (!keyValue.match(alphaNumPattern))
                 {
-                    console.log(key + " is not set");
+                    console.log(keyName + " is not set");
                     process.exit(0);
                 }
             }
