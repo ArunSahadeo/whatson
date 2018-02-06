@@ -65,8 +65,6 @@ for (var key in config)
     }
 }
 
-process.exit(0);
-
 var connectionParams = {
     host: 'api.twitch.tv',
     frontendHost: 'www.twitch.tv',
