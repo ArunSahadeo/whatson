@@ -6,6 +6,63 @@ if (!config)
     process.exit(0);
 }
 
+for (var key in config)
+{
+    
+    var keyValue;
+    const alphaNumPattern = /^([0-9]|[a-z])+([0-9a-z]+)$/i;
+
+    switch (key)
+    {
+        case "user":
+            if (config.hasOwnProperty(key))
+            {
+                keyValue = config[key];
+                if(!Number.isInteger(keyValue))
+                {
+                    console.log(key + " is not set");
+                    process.exit(0);
+                }
+            }
+        break;
+        case "oauth":
+            if (config.hasOwnProperty(key))
+            {
+                keyValue = config[key];
+                if (!keyValue.match(alphaNumPattern))
+                {
+                    console.log(keyValue + " is not set");
+                    process.exit(0);
+                }
+            }
+        break;
+        case "client_id":
+            if (config.hasOwnProperty(key))
+            {
+                keyValue = config[key];
+                if (!keyValue.match(alphaNumPattern))
+                {
+                    console.log(keyValue + " is not set");
+                    process.exit(0);
+                }
+            }
+        break;
+        case "client_secret":
+            if (config.hasOwnProperty(key))
+            {
+                keyValue = config[key];
+                if (!keyValue.match(alphaNumPattern))
+                {
+                    console.log(keyValue + " is not set");
+                    process.exit(0);
+                }
+            }
+        break;
+    }
+}
+
+process.exit(0);
+
 var connectionParams = {
     host: 'api.twitch.tv',
     frontendHost: 'www.twitch.tv',
