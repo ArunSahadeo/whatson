@@ -18,7 +18,7 @@ for (var key in config)
             if (config.hasOwnProperty(key))
             {
                 keyValue = config[key];
-                if(!Number.isInteger(keyValue))
+                if(!Number.isInteger(parseInt(keyValue)))
                 {
                     console.log(key + " is not set");
                     process.exit(0);
@@ -31,7 +31,7 @@ for (var key in config)
                 keyValue = config[key];
                 if (!keyValue.match(alphaNumPattern))
                 {
-                    console.log(keyValue + " is not set");
+                    console.log(key + " is not set");
                     process.exit(0);
                 }
             }
@@ -42,7 +42,7 @@ for (var key in config)
                 keyValue = config[key];
                 if (!keyValue.match(alphaNumPattern))
                 {
-                    console.log(keyValue + " is not set");
+                    console.log(key + " is not set");
                     process.exit(0);
                 }
             }
@@ -53,7 +53,7 @@ for (var key in config)
                 keyValue = config[key];
                 if (!keyValue.match(alphaNumPattern))
                 {
-                    console.log(keyValue + " is not set");
+                    console.log(key + " is not set");
                     process.exit(0);
                 }
             }
