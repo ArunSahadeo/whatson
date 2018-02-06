@@ -17,6 +17,7 @@ for (var key in config)
         case "user":
             if (config.hasOwnProperty(key))
             {
+                key = key.charAt(0).toUpperCase() + key.substr(1);
                 keyValue = config[key];
                 if(!Number.isInteger(parseInt(keyValue)))
                 {
@@ -28,6 +29,7 @@ for (var key in config)
         case "oauth":
             if (config.hasOwnProperty(key))
             {
+                key = key.charAt(0).toUpperCase() + key.substr(1);
                 keyValue = config[key];
                 if (!keyValue.match(alphaNumPattern))
                 {
@@ -39,6 +41,7 @@ for (var key in config)
         case "client_id":
             if (config.hasOwnProperty(key))
             {
+                key = key.charAt(0).toUpperCase() + key.substr(1);
                 keyValue = config[key];
                 if (!keyValue.match(alphaNumPattern))
                 {
@@ -50,6 +53,7 @@ for (var key in config)
         case "client_secret":
             if (config.hasOwnProperty(key))
             {
+                key = key.charAt(0).toUpperCase() + key.substr(1);
                 keyValue = config[key];
                 if (!keyValue.match(alphaNumPattern))
                 {
