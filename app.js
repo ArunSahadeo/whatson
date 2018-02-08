@@ -695,7 +695,19 @@ function isFollowing(channel)
 }
 
 var args = process.argv.slice(2),
-    help = "Please specify a flag.";
+    help = "Please specify a flag.",
+    availableFlags = [
+        '--channels',
+        '--community',
+        '--game',
+        '--follow',
+        '--unfollow',
+        '--is-live',
+        '--last-updated',
+        '--panel-info',
+        '--is-following'
+    ]
+    ;
 
 if ( args.length < 1 )
 {
@@ -743,5 +755,11 @@ switch (args[0].toLowerCase()) {
     case (args[0].match(/--is-following/) || {}).input:
         const channelToCheck = args[0].split("=")[1];
         isFollowing(channelToCheck);
+    break;
+    default:
+        console.log("Invalid flags. The available flags are:");
+        availableFlags.forEach(function(flag){
+            console.log(flag);
+        });
     break;
 }
