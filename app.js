@@ -422,7 +422,8 @@ function checkGame(game, streamLimit)
                 streams = parsed.streams,
                 gameStreams = [];
 
-            Array.from(streams).forEach(function(stream){
+            Array.from(streams).forEach(function(stream, index){
+                stream.channel.viewers = streams[index].viewers;
                 if (stream.channel.display_name.length > 0) {
                     gameStreams.push(stream.channel);
                 }
@@ -446,6 +447,7 @@ function checkGame(game, streamLimit)
                 console.log("Status: " + gameStream.status);
                 console.log("Desc: " + gameStream.description);
                 console.log("Lang: " + gameStream.language);
+                console.log("Viewers: " + gameStream.viewers);
                 console.log("\n");
             });
 
