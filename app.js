@@ -1,8 +1,13 @@
 const https = require("https"), fs = require("fs"), config = fs.existsSync("./config.json") ? require("./config.json") : false;
 
-if (!config)
+if (!config || Object.keys(config).length === 0)
 {
-    console.log("config.json does not exist");
+    !config
+        ?
+    console.log("config.json does not exist")
+    :
+    console.log("config.json has no keys")
+    ;
     process.exit(0);
 }
 
@@ -15,51 +20,39 @@ for (var key in config)
     switch (key)
     {
         case "user":
-            if (config.hasOwnProperty(key))
+            keyName = key.charAt(0).toUpperCase() + key.substr(1);
+            keyValue = config[key];
+            if(!Number.isInteger(parseInt(keyValue)))
             {
-                keyName = key.charAt(0).toUpperCase() + key.substr(1);
-                keyValue = config[key];
-                if(!Number.isInteger(parseInt(keyValue)))
-                {
-                    console.log(keyName + " is not set");
-                    process.exit(0);
-                }
+                console.log(keyName + " is not set");
+                process.exit(0);
             }
         break;
         case "oauth":
-            if (config.hasOwnProperty(key))
+            keyName = key.charAt(0).toUpperCase() + key.charAt(1).toUpperCase() + key.substr(2);
+            keyValue = config[key];
+            if (!keyValue.match(alphaNumPattern))
             {
-                keyName = key.charAt(0).toUpperCase() + key.charAt(1).toUpperCase() + key.substr(2);
-                keyValue = config[key];
-                if (!keyValue.match(alphaNumPattern))
-                {
-                    console.log(keyName + " is not set");
-                    process.exit(0);
-                }
+                console.log(keyName + " is not set");
+                process.exit(0);
             }
         break;
         case "client_id":
-            if (config.hasOwnProperty(key))
+            keyName = key.charAt(0).toUpperCase() + key.substr(1);
+            keyValue = config[key];
+            if (!keyValue.match(alphaNumPattern))
             {
-                keyName = key.charAt(0).toUpperCase() + key.substr(1);
-                keyValue = config[key];
-                if (!keyValue.match(alphaNumPattern))
-                {
-                    console.log(keyName + " is not set");
-                    process.exit(0);
-                }
+                console.log(keyName + " is not set");
+                process.exit(0);
             }
         break;
         case "client_secret":
-            if (config.hasOwnProperty(key))
+            keyName = key.charAt(0).toUpperCase() + key.substr(1);
+            keyValue = config[key];
+            if (!keyValue.match(alphaNumPattern))
             {
-                keyName = key.charAt(0).toUpperCase() + key.substr(1);
-                keyValue = config[key];
-                if (!keyValue.match(alphaNumPattern))
-                {
-                    console.log(keyName + " is not set");
-                    process.exit(0);
-                }
+                console.log(keyName + " is not set");
+                process.exit(0);
             }
         break;
     }
