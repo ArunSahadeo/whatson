@@ -57,6 +57,7 @@ for (var key in config)
         break;
         default:
             console.log(key + " is not a valid key name!");
+            process.exit(0);
         break;
     }
 }
