@@ -733,10 +733,20 @@ switch (args[0].toLowerCase()) {
     break;
     case (args[0].match(/--follow/) || {}).input:
         const channel = args[0].includes("--follow") ? args[0].split("=")[1] : '';
+        if (!channel)
+        {
+            console.log("Channel to follow is empty");
+            process.exit(0);
+        }
         sendFollow(channel);
     break;
     case (args[0].match(/--unfollow/) || {}).input:
         const channelToUnfollow = args[0].includes("--unfollow") ? args[0].split("=")[1] : '';
+        if (!channelToUnfollow)
+        {
+            console.log("Channel to unfollow is empty");
+            process.exit(0);
+        }
         sendUnfollow(channelToUnfollow);
     break;
     case (args[0].match(/--is-live/) || {}).input:
