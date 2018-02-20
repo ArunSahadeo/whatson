@@ -618,6 +618,8 @@ function getPanels(channel, displayOrder)
                         return parseInt(panel.display_order, 10) === parseInt(displayOrder, 10);
                      });
 
+
+                console.log(panelSingular.data.title + "\n");
                 console.log(panelSingular.data.description);
 
                 return;
@@ -625,7 +627,21 @@ function getPanels(channel, displayOrder)
 
             parsed.map((panel) =>
             {
-                console.log(panel !== undefined ? panel.data.description : '');
+                if (panel !== undefined)
+                {
+                    var title = String(panel.data.title + "\n"),
+                        desc = panel.data.description;
+
+                    switch (process.platform)
+                    {
+                        case "linux":
+                            const black = "\033[1m%s\033[0m";
+                            console.log(black, title + "\n");
+                            console.log(desc + "\n");
+                        break;
+                    }
+
+                }
             });
 
         });
