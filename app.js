@@ -735,7 +735,7 @@ switch (args[0].toLowerCase()) {
         if (!channel)
         {
             console.log("Channel to follow is empty");
-            process.exit(0);
+            process.exit(1);
         }
         sendFollow(channel);
     break;
@@ -744,7 +744,7 @@ switch (args[0].toLowerCase()) {
         if (!channelToUnfollow)
         {
             console.log("Channel to unfollow is empty");
-            process.exit(0);
+            process.exit(1);
         }
         sendUnfollow(channelToUnfollow);
     break;
@@ -758,6 +758,11 @@ switch (args[0].toLowerCase()) {
     break;
     case (args[0].match(/--panel-info/) || {}).input:
         const panelChannel = args[0].split("=")[1];
+        if (panelChannel.length === 0)
+        {
+            console.log("--panel-info cannot be empty.");
+            process.exit(1);
+        }
         const displayOrder = args[1] && args[1].includes("--display-order") ? args[1].split("=")[1] : 0;
         getPanels(panelChannel, displayOrder);
     break;
