@@ -641,10 +641,10 @@ function getPanels(channel, displayOrder)
 
                             if ( desc.match(markdownPattern) )
                             {
-                                filteredDesc = desc.replace(markdownPattern, "$1");
+                                filteredDesc = desc.replace(markdownPattern, "\033[1m$1\n\033[0m");
                             }
 
-                            if (filteredDesc) console.log(black, filteredDesc);
+                            if (filteredDesc) console.log(filteredDesc);
 
                             else console.log(desc + "\n");
 
