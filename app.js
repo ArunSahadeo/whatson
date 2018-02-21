@@ -641,7 +641,7 @@ function getPanels(channel, displayOrder)
                     {
                         case "linux":
 
-                            if ( desc.match(markdownPattern) )
+                            if ( String(desc).match(markdownPattern) )
                             {
                                 filteredDesc = desc.replace(markdownPattern, "\033[1m$1\n\033[0m");
                             }
@@ -656,7 +656,7 @@ function getPanels(channel, displayOrder)
 
                         case "win32":
 
-                            if ( desc.match(markdownPattern) )
+                            if ( String(desc).match(markdownPattern) )
                             {
                                 filteredDesc = desc.replace(markdownPattern, "\033[1m$1\n\033[0m");
                             }
