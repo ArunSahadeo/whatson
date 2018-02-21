@@ -630,24 +630,42 @@ function getPanels(channel, displayOrder)
                 if (panel !== undefined)
                 {
                     var title = String(panel.data.title + "\n"),
-                        desc = panel.data.description;
+                        desc = panel.data.description,
+                        filteredDesc,
+                        markdownPattern = /[#]{1,}([A-Z|a-z|+|\s]+)\n?/g;
+                    
+                    const linuxBold = "\033[1m%s\n\033[0m",
+                          winBold = "\x1b[1m%s\n\x1b[0m";
 
                     switch (process.platform)
                     {
                         case "linux":
-                            const black = "\033[1m%s\n\033[0m";
-                            const markdownPattern = /[#]{2,}([A-Z|a-z|+|\s]+)\n?/g;
-                            var filteredDesc;
 
                             if ( desc.match(markdownPattern) )
                             {
                                 filteredDesc = desc.replace(markdownPattern, "\033[1m$1\n\033[0m");
                             }
 
+                            console.log(linuxBold, title);
+
                             if (filteredDesc) console.log(filteredDesc);
 
                             else console.log(desc + "\n");
 
+                        break;
+
+                        case "win32":
+
+                            if ( desc.match(markdownPattern) )
+                            {
+                                filteredDesc = desc.replace(markdownPattern, "\033[1m$1\n\033[0m");
+                            }
+
+                            console.log(winBold, title);
+
+                            if (filteredDesc) console.log(filteredDesc);
+
+                            else console.log(desc + "\n");
                         break;
                     }
 
