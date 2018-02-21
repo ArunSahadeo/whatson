@@ -632,7 +632,7 @@ function getPanels(channel, displayOrder)
                     var title = String(panel.data.title + "\n"),
                         desc = panel.data.description,
                         filteredDesc,
-                        markdownPattern = /[#]{1,}([A-Z|a-z|0-9|.|+|/|(|)|\s]+)\n?/g;
+                        markdownPattern = /[#]{1,}([A-Z|a-z|0-9|.|'|+|/|(|)|\s]+)\n?/g;
                     
                     const linuxBold = "\033[1m%s\n\033[0m",
                           winBold = "\x1b[1m%s\n\x1b[0m";
