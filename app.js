@@ -635,9 +635,19 @@ function getPanels(channel, displayOrder)
                     switch (process.platform)
                     {
                         case "linux":
-                            const black = "\033[1m%s\033[0m";
-                            console.log(black, title + "\n");
-                            console.log(desc + "\n");
+                            const black = "\033[1m%s\n\033[0m";
+                            const markdownPattern = /[#]{2,}([A-Z|a-z|+|\s]+)\n?/g;
+                            var filteredDesc;
+
+                            if ( desc.match(markdownPattern) )
+                            {
+                                filteredDesc = desc.replace(markdownPattern, "$1");
+                            }
+
+                            if (filteredDesc) console.log(black, filteredDesc);
+
+                            else console.log(desc + "\n");
+
                         break;
                     }
 
