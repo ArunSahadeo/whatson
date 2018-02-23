@@ -758,7 +758,9 @@ if ( args.length < 1 )
     process.exit(0);
 }
 
-switch (args[0].toLowerCase()) {
+args[0] = args[0].toLowerCase();
+
+switch (args[0]) {
     case (args[0].match(/--channels/) || {}).input:
         const limit = args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : 0;
         const category = (args[1] && args[1].includes("--category")) || (args[2] && args[2].includes("--category")) ? args[1].split("=")[1] || args[2].split("=")[2] : '';
