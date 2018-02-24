@@ -679,6 +679,67 @@ function getPanels(channel, displayOrder)
     queryPanels();
 }
 
+function getChannelInfo(channel)
+{
+
+    function queryChannel(channel)
+    {
+        var options = {
+            hostname: connectionParams.host,
+            path: connectionParams.path.channelStatus + channel,
+            port: 443,
+            method: 'GET',
+            headers: {
+                'Accept': 'application/vnd.twitchtv.v5+json',
+                'Client-ID': config.client_id,
+                'Authorization': 'OAuth ' + config.oauth
+            }
+        };
+
+        return https.get(options, function (response) {
+            var body = '';
+            response.on('data', function(d) {
+                body += d;
+            });
+        
+        response.on('end', function()
+        {
+
+            var parsed = JSON.parse(body),
+                channelSingle = parsed.stream.channel;
+
+            if (typeof(channelSingle) === undefined)
+            {
+                console.log("Couldn't fetch live channel. Please try again.");
+                return;
+            }
+
+            channelSingle.viewers = parsed.stream.viewers;
+
+            if (Object.keys(channelSingle).length < 1)
+            {
+                console.log("This channel has no info.");
+                return;
+            };
+
+            console.log("Streamer: " + channelSingle.name);
+            console.log("Status: " + channelSingle.status);
+            console.log("Desc: " + channelSingle.description);
+            console.log("Game: " + channelSingle.game);
+            console.log("Lang: " + channelSingle.language);
+            console.log("Viewers: " + channelSingle.viewers);
+            console.log("\n");
+
+        });
+        });
+    }
+
+    getChannelID(channel).then(queryChannel, function(error){
+        console.error("Failed!", error);
+    });
+
+}
+
 function isFollowing(channel)
 {
 
@@ -811,6 +872,15 @@ switch (args[0]) {
         }
         const displayOrder = args[1] && args[1].includes("--display-order") ? args[1].split("=")[1] : 0;
         getPanels(panelChannel, displayOrder);
+    break;
+    case (args[0].match(/--channel-info/) || {}).input:
+        const targetChannel = args[0].split("=")[1];
+        if (targetChannel.length === 0)
+        {
+            console.log("--channel-info cannot be empty.");
+            process.exit(1);
+        }
+        getChannelInfo(targetChannel);
     break;
     case (args[0].match(/--is-following/) || {}).input:
         const channelToCheck = args[0].split("=")[1];
