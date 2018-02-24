@@ -679,7 +679,7 @@ function getPanels(channel, displayOrder)
     queryPanels();
 }
 
-function getChannelInfo(channel)
+function getChannelInfo(channelName)
 {
 
     function queryChannel(channel)
@@ -709,7 +709,7 @@ function getChannelInfo(channel)
 
             if (!parsed.stream)
             {
-                console.log("Couldn't fetch live channel. Please try again.");
+                console.log(channelName + " is not live");
                 return;
             }
 
@@ -735,7 +735,7 @@ function getChannelInfo(channel)
         });
     }
 
-    getChannelID(channel).then(queryChannel, function(error){
+    getChannelID(channelName).then(queryChannel, function(error){
         console.error("Failed!", error);
     });
 
