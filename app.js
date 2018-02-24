@@ -705,14 +705,15 @@ function getChannelInfo(channel)
         response.on('end', function()
         {
 
-            var parsed = JSON.parse(body),
-                channelSingle = parsed.stream.channel;
+            var parsed = JSON.parse(body);
 
-            if (typeof(channelSingle) === undefined)
+            if (!parsed.stream)
             {
                 console.log("Couldn't fetch live channel. Please try again.");
                 return;
             }
+
+            channelSingle = parsed.stream.channel;
 
             channelSingle.viewers = parsed.stream.viewers;
 
