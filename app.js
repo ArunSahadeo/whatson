@@ -753,10 +753,40 @@ function getChannelInfo(channelName)
 
             if (!fs.existsSync(previewFileName)) return;
 
+            var isWin = require("os").platform().includes("win"),
+                which = isWin ? "where" : "which",
+                spawn = require("child_process").spawn;
+
+            var imageTools = [
+                "eog",
+            ];
+
+            imageTools.forEach(function(imageTool)
+            {
+                var out = spawn(which, [imageTool])
+                    .on("error", function(err) { throw err });
+
+                out.on("close", function(code){
+                    if ( parseInt(code) === 0 )
+                    {
+                        exec(imageTool + " " + previewFileName, function(err)
+                        {
+                            console.error(err);
+                        });
+
+                        return;
+                    }
+                });
+            });
+
+            /*
+
             exec("eog " + previewFileName, function(err)
             {
                 console.error(err);
             });
+
+            */
 
         });
         });
