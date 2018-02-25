@@ -14,7 +14,7 @@ if (!config || Object.keys(config).length === 0)
 for (var key in config)
 {
 
-    if ( key === "preview_dimensions" ) continue;
+    if ( key === "preview_dimensions" || key === "image_tools" ) continue;
     
     var keyValue;
     const alphaNumPattern = /^([0-9]|[a-z])+([0-9a-z]+)$/i;
@@ -757,9 +757,7 @@ function getChannelInfo(channelName)
                 which = isWin ? "where" : "which",
                 spawn = require("child_process").spawn;
 
-            var imageTools = [
-                "eog",
-            ];
+            var imageTools = Array.from(config.image_tools);
 
             imageTools.forEach(function(imageTool)
             {
