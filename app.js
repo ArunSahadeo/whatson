@@ -743,7 +743,7 @@ function getChannelInfo(channelName)
             console.log("Viewers: " + channelSingle.viewers);
             console.log("\n");
 
-            var previewFileName = String(channelSingle.preview).replace(/^.+_/, '');
+            var previewFileName = String(channelSingle.preview).replace(/^.+_/, ''),
                 previewFileStream = fs.createWriteStream(previewFileName);
 
             var previewRequest = https.get(channelSingle.preview, function(resp)
