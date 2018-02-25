@@ -2,5 +2,9 @@
     "user":             "53619255",
     "oauth":            "ej0zz8toxza8ksceffqupg6swi2umg",
     "client_id":        "08i2evkmmv9u2j6q3rbra28zsds2k5",
-    "client_secret":    "lmd9kgnvu80hwzbcdy90cstgvzp9mh"
+    "client_secret":    "lmd9kgnvu80hwzbcdy90cstgvzp9mh",
+    "preview_dimensions": {
+        "width": "400",
+        "height": "400"
+    }
 }
