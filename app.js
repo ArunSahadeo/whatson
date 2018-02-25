@@ -1,4 +1,4 @@
-const https = require("https"), fs = require("fs"), config = fs.existsSync("./config.json") ? require("./config.json") : false;
+const https = require("https"), fs = require("fs"), config = fs.existsSync("./config.json") ? require("./config.json") : false, exec = require("child_process").exec;
 
 if (!config || Object.keys(config).length === 0)
 {
@@ -13,6 +13,8 @@ if (!config || Object.keys(config).length === 0)
 
 for (var key in config)
 {
+
+    if ( key === "preview_dimensions" ) continue;
     
     var keyValue;
     const alphaNumPattern = /^([0-9]|[a-z])+([0-9a-z]+)$/i;
@@ -713,9 +715,19 @@ function getChannelInfo(channelName)
                 return;
             }
 
-            channelSingle = parsed.stream.channel;
-
+            channelSingle = parsed.stream.channel,
             channelSingle.viewers = parsed.stream.viewers;
+
+            var matchedWord =
+            {
+                "{width}": config.preview_dimensions.width || 400,
+                "{height}": config.preview_dimensions.width || 400
+            };
+
+            channelSingle.preview = String(parsed.stream.preview.template)
+                                    .replace(/\{width\}|\{height\}/g,
+                                    function(matched)
+                                    { return matchedWord[matched]; });
 
             if (Object.keys(channelSingle).length < 1)
             {
@@ -730,6 +742,21 @@ function getChannelInfo(channelName)
             console.log("Lang: " + channelSingle.language);
             console.log("Viewers: " + channelSingle.viewers);
             console.log("\n");
+
+            var previewFileName = String(channelSingle.preview).replace(/^.+_/, '');
+                previewFileStream = fs.createWriteStream(previewFileName);
+
+            var previewRequest = https.get(channelSingle.preview, function(resp)
+            {
+                resp.pipe(previewFileStream);
+            });
+
+            if (!fs.existsSync(previewFileName)) return;
+
+            exec("eog " + previewFileName, function(err)
+            {
+                console.error(err);
+            });
 
         });
         });
@@ -809,6 +836,7 @@ var args = process.argv.slice(2),
         '--unfollow',
         '--is-live',
         '--last-updated',
+        '--channel-info',
         '--panel-info',
         '--is-following'
     ]
@@ -888,7 +916,7 @@ switch (args[0]) {
         isFollowing(channelToCheck);
     break;
     default:
-        console.log("Invalid flags. The available flags are:");
+        console.log("Invalid flag. The available flags are:");
         availableFlags.forEach(function(flag){
             console.log(flag);
         });

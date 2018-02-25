@@ -2,5 +2,9 @@
     "user":             "PUT YOUR USER UID HERE",
     "oauth":            "PUT YOUR ACCESS TOKEN HERE",
     "client_id":        "PUT YOUR CLIENT ID HERE",
-    "client_secret":    "PUT YOUR CLIENT SECRET HERE"
+    "client_secret":    "PUT YOUR CLIENT SECRET HERE",
+    "preview_dimensions": {
+        "width": "PUT YOUR DESIRED WIDTH HERE",
+        "height": "PUT YOUR DESIRED HEIGHT HERE"
+    }
 }
