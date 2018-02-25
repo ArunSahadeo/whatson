@@ -6,8 +6,5 @@
     "preview_dimensions": {
         "width": "PUT YOUR DESIRED WIDTH HERE",
         "height": "PUT YOUR DESIRED HEIGHT HERE"
-    },
-    "image_tools": [
-        "BINARY_1"
-    ]
+    }
 }

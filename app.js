@@ -757,7 +757,9 @@ function getChannelInfo(channelName)
                 which = isWin ? "where" : "which",
                 spawn = require("child_process").spawn;
 
-            var imageTools = Array.from(config.image_tools);
+            var imageTools = [
+                "eog"
+            ];
 
             imageTools.forEach(function(imageTool)
             {
