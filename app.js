@@ -11,26 +11,6 @@ if (!config || Object.keys(config).length === 0)
     process.exit(0);
 }
 
-function copyFile(source, target)
-{
-    var rd = fs.createReadStream(source);
-    var wr = fs.createWriteStream(target);
-    
-    return new Promise(function(resolve, reject)
-    {
-        rd.on('error', reject);
-        wr.on('error', reject);
-        wr.on('finish', resolve);
-        rd.pipe(wr);
-    }).catch(function(error)
-    {
-        rd.destroy();
-        wr.end();
-        throw error;
-    });
-
-}
-
 for (var key in config)
 {
 
