@@ -11,6 +11,26 @@ if (!config || Object.keys(config).length === 0)
     process.exit(0);
 }
 
+function copyFile(source, target)
+{
+    var rd = fs.createReadStream(source);
+    var wr = fs.createWriteStream(target);
+    
+    return new Promise(function(resolve, reject)
+    {
+        rd.on('error', reject);
+        wr.on('error', reject);
+        wr.on('finish', resolve);
+        rd.pipe(wr);
+    }).catch(function(error)
+    {
+        rd.destroy();
+        wr.end();
+        throw error;
+    });
+
+}
+
 for (var key in config)
 {
 
@@ -720,8 +740,8 @@ function getChannelInfo(channelName)
 
             var matchedWord =
             {
-                "{width}": config.preview_dimensions.width || 400,
-                "{height}": config.preview_dimensions.width || 400
+                "{width}": "preview_dimensions.width" in config ? config.preview_dimensions.width : 400,
+                "{height}": "previe_dimensions.height" in config ? config.preview_dimensions.height : 400
             };
 
             channelSingle.preview = String(parsed.stream.preview.template)
@@ -757,12 +777,22 @@ function getChannelInfo(channelName)
                 which = isWin ? "where" : "which",
                 spawn = require("child_process").spawn;
 
+            if (isWin)
+            {
+
+                console.log("Please open " + previewFileName + " in your preferred application.");
+
+                return;
+            }
+
             var imageTools = [
-                "eog"
+                "eog",
+                "photoshop"
             ];
 
             imageTools.forEach(function(imageTool)
             {
+
                 var out = spawn(which, [imageTool])
                     .on("error", function(err) { throw err });
 
@@ -778,16 +808,6 @@ function getChannelInfo(channelName)
                     }
                 });
             });
-
-            /*
-
-            exec("eog " + previewFileName, function(err)
-            {
-                console.error(err);
-            });
-
-            */
-
         });
         });
     }
