@@ -304,6 +304,10 @@ function getFollowed(limit, orderBy = 0)
 
         followedStreamers.forEach(function(followedStreamer){
             console.log("Streamer: " + followedStreamer.name);
+            console.log("Last known game: " + followedStreamer.game);
+            console.log("Language: " + followedStreamer.language);
+            console.log("Description: " + followedStreamer.description);
+            console.log("Broadcaster Type: " + followedStreamer.broadcaster_type);
             console.log("\n");
         });
 
