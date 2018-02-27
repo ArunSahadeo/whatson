@@ -235,6 +235,82 @@ function getFollowedStreams(limit, category)
     });
 }
 
+function getFollowed(limit, orderBy = 0)
+{
+    
+    var queryParams =
+    {
+        'limit': (limit > 0 ? limit : 100),
+    };
+    
+    if (orderBy.length && orderBy.toLowerCase() === "asc" || orderBy.toLowerCase() === "desc")
+    {   
+        queryParams =
+        {
+            'limit': (limit > 0 ? limit: 100),
+            'direction': String(orderBy.toLowerCase()),
+            'sortby': 'login',
+        }
+    }
+
+    var channelFollowsPath = connectionParams.path.channelFollow;
+    channelFollowsPath += "?";
+
+    for ( var key in queryParams )
+    {
+        channelFollowsPath += (key + "=" + queryParams[key]);
+
+        if (key !== Object.keys(queryParams)[Object.keys(queryParams).length -1]) channelFollowsPath += "&";
+    }
+
+    return https.get({
+        hostname: connectionParams.host,
+        path: channelFollowsPath,
+        port: 443,
+        headers: {
+            'Accept': 'application/vnd.twitchtv.v5+json',
+            'Client-ID': config.client_id,
+            'Authorization': 'OAuth ' + config.oauth
+        }
+    }, function (response) {
+        var body = '';
+        response.on('data', function(d) {
+            body += d;
+        });
+    
+    response.on('end', function()
+    {
+        var parsed = JSON.parse(body),
+            channelsFollowing = parsed.follows,
+            followedStreamers = []
+            ;
+
+        if (typeof(channelsFollowing) === undefined)
+        {
+            console.log("Couldn't fetch followed channels. Please try again.");
+            return;
+        }
+
+        Array.from(channelsFollowing).forEach(function(channelFollowing){
+            var channel = channelFollowing.channel;
+            if (channel.display_name.length > 0) {
+                followedStreamers.push(channel);
+            }
+        });
+
+        if (followedStreamers.length < 1) return;
+
+        console.log("Number of channels: " + followedStreamers.length + "\n\n");
+
+        followedStreamers.forEach(function(followedStreamer){
+            console.log("Streamer: " + followedStreamer.name);
+            console.log("\n");
+        });
+
+    });
+    });
+}
+
 function sendFollow(channel)
 {
 
@@ -868,7 +944,8 @@ var args = process.argv.slice(2),
         '--last-updated',
         '--channel-info',
         '--panel-info',
-        '--is-following'
+        '--is-following',
+        '--get-followed'
     ]
     ;
 
@@ -940,6 +1017,11 @@ switch (args[0]) {
             process.exit(1);
         }
         getChannelInfo(targetChannel);
+    break;
+    case (args[0].match(/--get-followed/) || {}).input:
+        const followLimit = args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : 0;
+        const orderBy = (args[1] && args[1].includes("--order-by") ? args[1].split("=")[1] : 0) || (args[2] && args[2].includes("--order-by") ? args[2].split("=")[1] : 0);
+        getFollowed(followLimit, orderBy);
     break;
     case (args[0].match(/--is-following/) || {}).input:
         const channelToCheck = args[0].split("=")[1];
