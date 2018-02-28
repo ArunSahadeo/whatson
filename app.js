@@ -826,8 +826,6 @@ function getChannelInfo(channelName)
             var previewFileName = String(channelSingle.preview).replace(/^.+(live_user_)/, ''),
                 previewFileStream = fs.createWriteStream(previewFileName);
 
-            console.log(previewFileName);
-
             var previewRequest = https.get(channelSingle.preview, function(resp)
             {
                 resp.pipe(previewFileStream);
