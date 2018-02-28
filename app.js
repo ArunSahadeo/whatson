@@ -823,8 +823,10 @@ function getChannelInfo(channelName)
             console.log("Viewers: " + channelSingle.viewers);
             console.log("\n");
 
-            var previewFileName = String(channelSingle.preview).replace(/^.+_/, ''),
+            var previewFileName = String(channelSingle.preview).replace(/^.+(live_user_)/, ''),
                 previewFileStream = fs.createWriteStream(previewFileName);
+
+            console.log(previewFileName);
 
             var previewRequest = https.get(channelSingle.preview, function(resp)
             {
