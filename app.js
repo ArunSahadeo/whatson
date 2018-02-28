@@ -235,7 +235,7 @@ function getFollowedStreams(limit, category)
     });
 }
 
-function getFollowed(limit, orderBy = 0)
+function getFollowed(limit, orderBy = 0, filterChar)
 {
     
     var queryParams =
@@ -299,6 +299,14 @@ function getFollowed(limit, orderBy = 0)
         });
 
         if (followedStreamers.length < 1) return;
+
+        if (filterChar)
+        {
+            followedStreamers = followedStreamers.filter(function(followedStreamer)
+            {
+                return String(followedStreamer.name).charAt(0) === String(filterChar).toLowerCase();
+            });
+        }
 
         console.log("Number of channels: " + followedStreamers.length + "\n\n");
 
@@ -1025,7 +1033,8 @@ switch (args[0]) {
     case (args[0].match(/--get-followed/) || {}).input:
         const followLimit = args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : 0;
         const orderBy = (args[1] && args[1].includes("--order-by") ? args[1].split("=")[1] : 0) || (args[2] && args[2].includes("--order-by") ? args[2].split("=")[1] : 0);
-        getFollowed(followLimit, orderBy);
+        const filterChar = (args[1] && args[1].includes("--filter-char") ? args[1].split("=")[1] : '') || (args[2] && args[2].includes("--filter-char") ? args[2].split("=")[1] : '') || (args[3] && args[3].includes("--filter-char") ? args[3].split("=")[1] : '');
+        getFollowed(followLimit, orderBy, filterChar);
     break;
     case (args[0].match(/--is-following/) || {}).input:
         const channelToCheck = args[0].split("=")[1];
