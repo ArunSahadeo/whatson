@@ -1032,7 +1032,7 @@ switch (args[0]) {
     break;
     case (args[0].match(/--get-followed/) || {}).input:
         const followLimit = args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : 0;
-        const orderBy = (args[1] && args[1].includes("--order-by") ? args[1].split("=")[1] : 0) || (args[2] && args[2].includes("--order-by") ? args[2].split("=")[1] : 0);
+        const orderBy = (args[1] && args[1].includes("--order-by") ? args[1].split("=")[1] : '') || (args[2] && args[2].includes("--order-by") ? args[2].split("=")[1] : '');
         const filterChar = (args[1] && args[1].includes("--filter-char") ? args[1].split("=")[1] : '') || (args[2] && args[2].includes("--filter-char") ? args[2].split("=")[1] : '') || (args[3] && args[3].includes("--filter-char") ? args[3].split("=")[1] : '');
         getFollowed(followLimit, orderBy, filterChar);
     break;
