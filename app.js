@@ -420,7 +420,7 @@ function sendUnfollow(channel)
 
 }
 
-function checkCommunity(community, streamLimit)
+function checkCommunity(community, streamLimit, communityFilter)
 {
 
     function getCommunityStreams(communityID)
@@ -463,14 +463,29 @@ function checkCommunity(community, streamLimit)
 
             if (communityStreams.length < 1) return;
 
-            function alphaSort(a, b)
+            function customSort(a, b)
             {
-                if (a.name < b.name) return -1;
-                if (a.name > b.name) return 1;
+                communityFilter = String(communityFilter).toLowerCase();
+                switch(communityFilter)
+                {
+                    case "viewers":
+                        if (a.viewers < b.viewers) return -1;
+                        if (a.viewers > b.viewers) return 1;
+                    break;
+                    case "game":
+                        if (a.game < b.game) return -1;
+                        if (a.game > b.game) return 1;
+                    break;
+                    case "name":
+                    default:
+                        if (a.name < b.name) return -1;
+                        if (a.name > b.name) return 1;
+                    break;
+                }
                 return 0;
             }
 
-            communityStreams.sort(alphaSort);
+            communityStreams.sort(customSort);
 
             console.log("Number of channels: " + communityStreams.length + "\n\n");
 
@@ -498,7 +513,7 @@ function checkCommunity(community, streamLimit)
 
 }
 
-function checkGame(game, streamLimit)
+function checkGame(game, streamLimit, gameFilter)
 {
 
 
@@ -540,14 +555,29 @@ function checkGame(game, streamLimit)
 
             if (gameStreams.length < 1) return;
 
-            function alphaSort(a, b)
+            function customSort(a, b)
             {
-                if (a.name < b.name) return -1;
-                if (a.name > b.name) return 1;
+                gameFilter = String(gameFilter).toLowerCase();
+                switch(gameFilter)
+                {
+                    case "viewers":
+                        if (a.viewers < b.viewers) return -1;
+                        if (a.viewers > b.viewers) return 1;
+                    break;
+                    case "game":
+                        if (a.game < b.game) return -1;
+                        if (a.game > b.game) return 1;
+                    break;
+                    case "name":
+                    default:
+                        if (a.name < b.name) return -1;
+                        if (a.name > b.name) return 1;
+                    break;
+                }
                 return 0;
             }
 
-            gameStreams.sort(alphaSort);
+            gameStreams.sort(customSort);
 
             console.log("Number of channels: " + gameStreams.length + "\n\n");
 
@@ -998,18 +1028,20 @@ switch (args[0]) {
     case (args[0].match(/--channels/) || {}).input:
         const limit = (args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : '') || (args[2] && args[2].includes("--limit") ? args[2].split("=")[1] : '') || (args[3] && args[3].includes("--limit") ? args[3].split("=")[1] : '');
         const category = (args[1] && args[1].includes("--category") ? args[1].split("=")[1] : '') || (args[2] && args[2].includes("--category") ? args[2].split("=")[1] : '') || (args[3] && args[3].includes("--category") ? args[3].split("=")[1] : '');
-        const channelsFilter = (args[1] && args[1].includes("--channels-filter") ? args[1].split("=")[1] : '') || (args[2] && args[2].includes("--channels-filter") ? args[2].split("=")[1] : '') || (args[3] && args[3].includes("--channelsfilter") ? args[3].split("=")[1] : '');
+        const channelsFilter = (args[1] && args[1].includes("--channels-filter") ? args[1].split("=")[1] : '') || (args[2] && args[2].includes("--channels-filter") ? args[2].split("=")[1] : '') || (args[3] && args[3].includes("--channels-filter") ? args[3].split("=")[1] : '');
         getFollowedStreams(limit, category, channelsFilter);
     break;
     case (args[0].match(/--community/) || {}).input:
         const community = args[0].includes("=") ? args[0].split("=")[1] : '';
         const streamLimit = args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : 0;
-        checkCommunity(community, streamLimit);
+        const communityFilter = (args[1] && args[1].includes("--community-filter") ? args[1].split("=")[1] : '') || (args[2] && args[2].includes("--community-filter") ? args[2].split("=")[1] : '') || (args[3] && args[3].includes("--community-filter") ? args[3].split("=")[1] : '');
+        checkCommunity(community, streamLimit, communityFilter);
     break;
     case (args[0].match(/--game/) || {}).input:
         const game = args[0].includes("=") ? encodeURIComponent(args[0].split("=")[1]) : '';
         const gameLimit = args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : 0;
-        checkGame(game, gameLimit);
+        const gameFilter = (args[1] && args[1].includes("--game-filter") ? args[1].split("=")[1] : '') || (args[2] && args[2].includes("--game-filter") ? args[2].split("=")[1] : '') || (args[3] && args[3].includes("--game-filter") ? args[3].split("=")[1] : '');
+        checkGame(game, gameLimit, gameFilter);
     break;
     case (args[0].match(/--follow/) || {}).input:
         const channel = args[0].includes("--follow") ? args[0].split("=")[1] : '';
