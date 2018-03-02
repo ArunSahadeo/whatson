@@ -1039,7 +1039,7 @@ switch (args[0]) {
     break;
     case (args[0].match(/--game/) || {}).input:
         const game = args[0].includes("=") ? encodeURIComponent(args[0].split("=")[1]) : '';
-        const gameLimit = args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : 0;
+        const gameLimit = (args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : '') || (args[2] && args[2].includes("--limit") ? args[2].split("=")[1] : '') || (args[3] && args[3].includes("--limit") ? args[3].split("=")[1] : '');
         const gameFilter = (args[1] && args[1].includes("--game-filter") ? args[1].split("=")[1] : '') || (args[2] && args[2].includes("--game-filter") ? args[2].split("=")[1] : '') || (args[3] && args[3].includes("--game-filter") ? args[3].split("=")[1] : '');
         checkGame(game, gameLimit, gameFilter);
     break;
