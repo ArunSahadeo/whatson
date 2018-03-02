@@ -162,7 +162,7 @@ function getCommunityID(communityDisplayName)
 
 }
 
-function getFollowedStreams(limit, category)
+function getFollowedStreams(limit, category, channelsFilter)
 {
     return https.get({
         hostname: connectionParams.host,
@@ -201,14 +201,29 @@ function getFollowedStreams(limit, category)
 
         if (followedChannels.length < 1) return;
 
-        function alphaSort(a, b)
+        function customSort(a, b)
         {
-            if (a.name < b.name) return -1;
-            if (a.name > b.name) return 1;
+            channelsFilter = String(channelsFilter).toLowerCase();
+            switch(channelsFilter)
+            {
+                case "viewers":
+                    if (a.viewers < b.viewers) return -1;
+                    if (a.viewers > b.viewers) return 1;
+                break;
+                case "game":
+                    if (a.game < b.game) return -1;
+                    if (a.game > b.game) return 1;
+                break;
+                case "name":
+                default:
+                    if (a.name < b.name) return -1;
+                    if (a.name > b.name) return 1;
+                break;
+            }
             return 0;
         }
 
-        followedChannels.sort(alphaSort);
+        followedChannels.sort(customSort);
 
         if (category.length > 1)
         {
@@ -981,9 +996,10 @@ args[0] = args[0].toLowerCase();
 
 switch (args[0]) {
     case (args[0].match(/--channels/) || {}).input:
-        const limit = args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : 0;
+        const limit = (args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : '') || (args[2] && args[2].includes("--limit") ? args[2].split("=")[1] : '') || (args[3] && args[3].includes("--limit") ? args[3].split("=")[1] : '');
         const category = (args[1] && args[1].includes("--category") ? args[1].split("=")[1] : '') || (args[2] && args[2].includes("--category") ? args[2].split("=")[1] : '') || (args[3] && args[3].includes("--category") ? args[3].split("=")[1] : '');
-        getFollowedStreams(limit, category);
+        const channelsFilter = (args[1] && args[1].includes("--channels-filter") ? args[1].split("=")[1] : '') || (args[2] && args[2].includes("--channels-filter") ? args[2].split("=")[1] : '') || (args[3] && args[3].includes("--channelsfilter") ? args[3].split("=")[1] : '');
+        getFollowedStreams(limit, category, channelsFilter);
     break;
     case (args[0].match(/--community/) || {}).input:
         const community = args[0].includes("=") ? args[0].split("=")[1] : '';
