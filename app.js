@@ -235,7 +235,7 @@ function getFollowedStreams(limit, category)
     });
 }
 
-function getFollowed(limit, orderBy = 0, filterChar)
+function getFollowed(limit, orderBy, filterChar)
 {
     
     var queryParams =
@@ -841,17 +841,27 @@ function getChannelInfo(channelName)
 
             if (!fs.existsSync(previewFileName)) return;
 
-            var isWin = require("os").platform().includes("win"),
-                which = isWin ? "where" : "which",
+            var whichOS = require("os").platform(),
+                which = whichOS.includes("win") ? "where" : "which",
                 spawn = require("child_process").spawn;
 
-            if (isWin)
+            if (whichOS.includes("win"))
             {
 
                 console.log("Please open " + previewFileName + " in your preferred application.");
 
                 return;
-            }
+			}
+			else if (whichOS.includes("darwin"))
+			{
+				exec("open -a Preview " + previewFileName, function(err)
+				{
+					console.error(err);
+				});
+
+				return;
+				
+			}
 
             var imageTools = [
                 "eog",
@@ -972,7 +982,7 @@ args[0] = args[0].toLowerCase();
 switch (args[0]) {
     case (args[0].match(/--channels/) || {}).input:
         const limit = args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : 0;
-        const category = (args[1] && args[1].includes("--category")) || (args[2] && args[2].includes("--category")) ? args[1].split("=")[1] || args[2].split("=")[2] : '';
+        const category = (args[1] && args[1].includes("--category") ? args[1].split("=")[1] : '') || (args[2] && args[2].includes("--category") ? args[2].split("=")[1] : '') || (args[3] && args[3].includes("--category") ? args[3].split("=")[1] : '');
         getFollowedStreams(limit, category);
     break;
     case (args[0].match(/--community/) || {}).input:
