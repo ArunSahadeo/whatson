@@ -980,6 +980,51 @@ function getChannelInfo(channelName)
 
 }
 
+function getUserInfo(userName)
+{
+
+    function queryUser(userSingle)
+    {
+        var options = {
+            hostname: connectionParams.host,
+            path: connectionParams.path.getUser + "?login=" + String(userSingle).toLowerCase(),
+            port: 443,
+            method: 'GET',
+            headers: {
+                'Accept': 'application/vnd.twitchtv.v5+json',
+                'Client-ID': config.client_id,
+                'Authorization': 'OAuth ' + config.oauth
+            }
+        };
+
+        return https.get(options, function (response) {
+            var body = '';
+            response.on('data', function(d) {
+                body += d;
+            });
+        
+        response.on('end', function()
+        {
+
+            var parsed = JSON.parse(body),
+                user = parsed.users[0];
+
+            if (!user)
+            {
+                console.log(userName + " does not exist");
+                return;
+            }
+
+            console.log("Username: " + user.name);
+            console.log("Desc: " + user.bio);
+
+        });
+        });
+    }
+
+    queryUser(userName);
+}
+
 function isFollowing(channel)
 {
 
@@ -1127,6 +1172,15 @@ switch (args[0]) {
             process.exit(1);
         }
         getChannelInfo(targetChannel);
+    break;
+    case (args[0].match(/--user-info/) || {}).input:
+        const userDisplay = args[0].split("=")[1];
+        if (userDisplay.length === 0)
+        {
+            console.log("--user-info cannot be empty.");
+            process.exit(1);
+        }
+        getUserInfo(userDisplay);
     break;
     case (args[0].match(/--get-followed/) || {}).input:
         const followLimit = args[1] && args[1].includes("--limit") ? args[1].split("=")[1] : 0;
