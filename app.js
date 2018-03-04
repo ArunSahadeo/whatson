@@ -66,7 +66,6 @@ for (var key in config)
 
 var connectionParams = {
     host: 'api.twitch.tv',
-    frontendHost: 'www.twitch.tv',
     path: {
         followedChannels: '/kraken/streams/followed?stream_type=live',
         getUser: '/kraken/users',
@@ -74,7 +73,8 @@ var connectionParams = {
         channelStatus: '/kraken/streams/',
         communityStatus: '/kraken/communities',
         channelPanels: '/api/channels/CHANNEL_PLACEHOLDER/panels',
-        channelVideos: '/kraken/channels/CHANNEL_PLACEHOLDER/videos'
+        channelVideos: '/kraken/channels/CHANNEL_PLACEHOLDER/videos',
+        channelFeed: '/kraken/feed/CHANNEL_PLACEHOLDER/posts?limit=1'
     }
 }
 
@@ -642,21 +642,59 @@ function checkLive(channel)
 
 }
 
-function lastBroadcast(channel)
+function channelPosts(channel)
 {
 
-    function lastChannelStatusUpdate(channel)
+    function checkLastPosted(channelID)
     {
+
+        var channelFeed = connectionParams.path.channelFeed.replace(/CHANNEL_PLACEHOLDER/i, channelID); 
+        
         var options = {
-            hostname: connectionParams.frontendHost,
-            path: '/' + channel,
+            hostname: connectionParams.host,
+            path: channelFeed,
             port: 443,
             method: 'GET',
             headers: {
-                'Accept': ''
+                'Accept': 'application/vnd.twitchtv.v5+json',
+                'Client-ID': config.client_id,
+                'Authorization': 'OAuth ' + config.oauth
             }
-        }
+        };
+
+        return https.get(options, function (response) {
+            var body = '';
+            response.on('data', function(d) {
+                body += d;
+            });
+        
+        response.on('end', function()
+        {
+            var parsed = JSON.parse(body),
+                posts = parsed.posts,
+                lastPost = posts[0];
+
+            if(!lastPost)
+            {
+                console.log("Channel has no posts.");
+                return;
+            }
+
+            console.log("Message: " + lastPost.body);
+            console.log("Date: " + lastPost.created_at);
+
+        });
+        });
     }
+
+    getChannelID(channel).then(checkLastPosted, function(error){
+        console.error("Failed!", error);
+    });
+
+}
+
+function lastBroadcast(channel)
+{
 
     function checkLastUpdated(channelID)
     {
@@ -1013,7 +1051,8 @@ var args = process.argv.slice(2),
         '--channel-info',
         '--panel-info',
         '--is-following',
-        '--get-followed'
+        '--get-followed',
+        '--last-posted',
     ]
     ;
 
@@ -1098,6 +1137,10 @@ switch (args[0]) {
     case (args[0].match(/--is-following/) || {}).input:
         const channelToCheck = args[0].split("=")[1];
         isFollowing(channelToCheck);
+    break;
+    case (args[0].match(/--last-posted/) || {}).input:
+        const feedChannel = args[0].split("=")[1];
+        channelPosts(feedChannel);
     break;
     default:
         console.log("Invalid flag. The available flags are:");
