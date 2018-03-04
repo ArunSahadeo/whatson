@@ -584,6 +584,7 @@ function checkGame(game, streamLimit, gameFilter)
             gameStreams.forEach(function(gameStream){
                 console.log("Streamer: " + gameStream.name);
                 console.log("Status: " + gameStream.status);
+                console.log("Game: " + gameStream.game);
                 console.log("Desc: " + gameStream.description);
                 console.log("Lang: " + gameStream.language);
                 console.log("Viewers: " + gameStream.viewers);
