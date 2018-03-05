@@ -238,8 +238,8 @@ function getFollowedStreams(limit, category, channelsFilter)
 
         followedChannels.forEach(function(followedChannel){
             console.log("Streamer: " + followedChannel.name);
-            console.log("Status: " + followedChannel.status);
-            console.log("Desc: " + followedChannel.description);
+            console.log("Status: " + String(followedChannel.status).trim());
+            console.log("Desc: " + String(followedChannel.description).trim());
             console.log("Game: " + followedChannel.game);
             console.log("Lang: " + followedChannel.language);
             console.log("Viewers: " + followedChannel.viewers);
