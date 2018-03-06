@@ -722,7 +722,7 @@ function lastBroadcast(channel)
         response.on('end', function()
         {
             var parsed = JSON.parse(body),
-                latestBroadcast = parsed.videos[0] ? parsed.videos[0].recorded_at : lastChannelStatusUpdate(channel),
+                latestBroadcast = parsed.videos[0] ? parsed.videos[0].recorded_at : false,
                 timeOffset = new Date().getTimezoneOffset() * 1000,
                 latestBroadcastDate = new Date(new Date(latestBroadcast).getTime() - timeOffset);
                 
