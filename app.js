@@ -892,8 +892,8 @@ function getChannelInfo(channelName)
 
             var matchedWord =
             {
-                "{width}": "preview_dimensions.width" in config ? config.preview_dimensions.width : 400,
-                "{height}": "previe_dimensions.height" in config ? config.preview_dimensions.height : 400
+                "{width}": config.preview_dimensions.width || 400,
+                "{height}": config.preview_dimensions.height || 400
             };
 
             channelSingle.preview = String(parsed.stream.preview.template)
