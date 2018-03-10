@@ -1,4 +1,10 @@
-const https = require("https"), fs = require("fs"), config = fs.existsSync("./config.json") ? require("./config.json") : false, exec = require("child_process").exec;
+const https = require("https"),
+      fs = require("fs"),
+      config = fs.existsSync("./config.json") ? require("./config.json") : false,
+      exec = require("child_process").exec,
+      whichOS = require("os").platform(),
+      which = whichOS.includes("win") ? "where" : "which",
+      spawn = require("child_process").spawn;
 
 if (!config || Object.keys(config).length === 0)
 {
@@ -62,6 +68,34 @@ for (var key in config)
             process.exit(0);
         break;
     }
+}
+
+function launchRecordedStream(recordedStream)
+{
+    var twitchCLIs = [
+        "livestreamer",
+        "streamlink"
+    ];
+
+    twitchCLIs.forEach(function(twitchCLI)
+    {
+
+        var out = spawn(which, [twitchCLI])
+        .on("error", function(err) { throw err });
+
+        out.on("close", function(code){
+            if ( parseInt(code) === 0 )
+            {
+                exec(`${twitchCLI} --player-passthrough=hls ${recordedStream} best`, function(err)
+                {
+                    if (err.code === 1) return;
+                });
+
+                return;
+            }
+        });
+    });
+
 }
 
 var connectionParams = {
@@ -750,6 +784,80 @@ function lastBroadcast(channel)
 
 }
 
+function getVideos(channel, videoPos, videoPlay)
+{
+
+    function queryVideos(channelID)
+    {
+
+        var videoPath = connectionParams.path.channelVideos.replace(/CHANNEL_PLACEHOLDER/i, channelID); 
+        
+        var options = {
+            hostname: connectionParams.host,
+            path: videoPath + '?broadcasts=true',
+            port: 443,
+            method: 'GET',
+            headers: {
+                'Accept': 'application/vnd.twitchtv.v5+json',
+                'Client-ID': config.client_id,
+                'Authorization': 'OAuth ' + config.oauth
+            }
+        };
+
+        return https.get(options, function (response) {
+            var body = '';
+            response.on('data', function(d) {
+                body += d;
+            });
+        
+        response.on('end', function()
+        {
+            var parsed = JSON.parse(body),
+                videos = parsed.videos[0] ? parsed.videos : false;
+
+            if (!videos)
+            {
+                console.log(`${channel} does not have any videos`);
+            }
+
+            if (videoPos)
+            {
+                video = videos[videoPos];
+                console.log(`Title: ${video.title}`);
+                console.log(`Broadcast status: ${video.broadcast_type}`);
+                console.log(`Recorded at: ${video.recorded_at}`);
+                console.log(`Game: ${video.game}`);
+                console.log(`URL: ${video.url}`);
+                console.log("\n");
+
+
+                if (videoPlay)
+                {
+                    launchRecordedStream(video.url);    
+                }
+                return;
+            }
+
+            Array.from(videos).forEach(function(video)
+            {
+                console.log(`Title: ${video.title}`);
+                console.log(`Broadcast status: ${video.broadcast_type}`);
+                console.log(`Recorded at: ${video.recorded_at}`);
+                console.log(`Game: ${video.game}`);
+                console.log(`URL: ${video.url}`);
+                console.log("\n");
+            });
+
+        });
+        });
+    }
+
+    getChannelID(channel).then(queryVideos, function(error){
+        console.error("Failed!", error);
+    });
+
+}
+
 function getPanels(channel, displayOrder)
 {
 
@@ -925,9 +1033,6 @@ function getChannelInfo(channelName)
 
             if (!fs.existsSync(previewFileName)) return;
 
-            var whichOS = require("os").platform(),
-                which = whichOS.includes("win") ? "where" : "which",
-                spawn = require("child_process").spawn;
 
             if (whichOS.includes("win"))
             {
@@ -1195,6 +1300,12 @@ switch (args[0]) {
     case (args[0].match(/--last-posted/) || {}).input:
         const feedChannel = args[0].split("=")[1];
         channelPosts(feedChannel);
+    break;
+    case (args[0].match(/--get-videos/) || {}).input:
+        const videoChannel = args[0].split("=")[1];
+        const videoPos = (args[1] && args[1].includes("--position") ? args[1].split("=")[1] : "");
+        let videoPlay = (args[1] && args[1].includes("--play") && args[2] && args[2].includes("--position") ? String(args[1].split("=")[1]).toLowerCase() : false) || ( args[1] && args[1].includes("--position") && args[2] && args[2].includes("--play") ? String(args[2].split("=")[1]).toLowerCase() : false);
+        getVideos(videoChannel, videoPos, videoPlay);
     break;
     default:
         console.log("Invalid flag. The available flags are:");
