@@ -1028,6 +1028,11 @@ function getChannelInfo(channelName)
 
             var previewRequest = https.get(channelSingle.preview, function(resp)
             {
+                if (parseInt(resp.statusCode) !== 200)
+                {
+                    console.error(channelSingle.preview + " returned " + resp.statusCode);
+                    return;
+                }
                 resp.pipe(previewFileStream);
             });
 
