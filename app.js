@@ -1031,11 +1031,23 @@ function getChannelInfo(channelName)
 
             var previewRequest = https.get(channelSingle.preview, function(resp)
             {
+				
+
                 if (parseInt(resp.statusCode) !== 200)
                 {
-                    console.error(channelSingle.preview + " returned " + resp.statusCode);
+					if(resp.headers['x-404-redirect'])
+					{
+						console.error(channelSingle.preview + " returned 404");
+					}
+
+					else
+					{
+						console.error(channelSingle.preview + " returned " + util.inspect(resp.headers));
+					}
+
                     return;
                 }
+
                 resp.pipe(previewFileStream);
             });
 
