@@ -233,7 +233,10 @@ function getFollowedStreams(limit, category, channelsFilter)
             }
         });
 
-        if (followedChannels.length < 1) return;
+        if (followedChannels.length < 1)
+		{
+			console.log("None of the channels you follow are currently streaming.\n");
+		};
 
         function customSort(a, b)
         {
